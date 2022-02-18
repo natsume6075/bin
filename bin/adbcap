@@ -1,0 +1,11 @@
+#!/bin/sh
+set -e # break script when error occurred
+
+adb root
+
+DATE=`date '+%Y%m%d-%H%M%S'`
+adb shell screencap -p /sdcard/screencap.png
+adb pull /sdcard/screencap.png ./ss_$DATE.png
+
+echo save as ./ss_$DATE.png
+
