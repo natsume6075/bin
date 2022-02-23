@@ -1,0 +1,33 @@
+#!/bin/sh
+set -e # break script when error occurred
+
+if [ $# = 0 ] ; then
+    out_filename=ss_`date '+%Y%m%d-%H%M%S'`
+elif [ $# = 1 ]; then
+    out_filename=$1
+else
+    echo "error: too many arguments" 1>&2
+    exit
+fi
+
+
+echo get to start recording.
+adb shell tcpdump -s 0 -i eth0 -v -w /sdcard/tmp.pcap
+adb pull /sdcard/tmp.pcap $out_filename.pcap
+adb shell rm /sdcard/tmp.pcap
+
+echo save packet capture as $out_filename.pcap
+
+<< COMMENT
+"adb shell tcpdump" の後に、C-c をすることで初めて止まる？
+pull で勝手に止めちゃう？
+後者なら、オプションをラップしたほうがいいかも。(そもそも直で叩いたほうがいいかも)
+
+-s  キャプチャサイズの指定、0は指定なし
+-i  interface を指定
+-v  TTLやサービス種別などの詳細情報を表示する
+-w  書き出すファイルを指定
+-r  キャプチャ結果を読み込む
+
+COMMENT
+

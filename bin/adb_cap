@@ -15,8 +15,5 @@ adb shell screencap -p /sdcard/tmp.png
 adb pull /sdcard/tmp.png $out_filename.png
 adb shell rm /sdcard/tmp.png
 
-# adb shell screenrecord /sdcard/screenrecord.mp4
-# adb pull /sdcard/screenrecord.mp4
-
 echo save screen capture as $out_filename.png
 
