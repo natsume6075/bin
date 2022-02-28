@@ -23,11 +23,18 @@ echo save packet capture as $out_filename.pcap
 pull で勝手に止めちゃう？
 後者なら、オプションをラップしたほうがいいかも。(そもそも直で叩いたほうがいいかも)
 
--s  キャプチャサイズの指定、0は指定なし
--i  interface を指定
--v  TTLやサービス種別などの詳細情報を表示する
--w  書き出すファイルを指定
--r  キャプチャ結果を読み込む
+オプション
+    -s  キャプチャサイズの指定、0は指定なし
+    -i  interface を指定
+    -v  TTLやサービス種別などの詳細情報を表示する
+    -w  書き出すファイルを指定(標準出力されなくなる)
+    -r  キャプチャ結果を読み込む
+
+    -X  パケットの中身をASCIIで表示します。
+    -tttt   見やすいタイムスタンプで出力する
+
+フィルタ
+    https://isleofhoso.com/linux-tcpdump-filter/
 
 COMMENT
 
