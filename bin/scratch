@@ -1,0 +1,5 @@
+#!/bin/sh
+
+filename=`date '+%Y-%m-%d_'`$1.md
+nvim "$ONEDRIVE/scratch/$filename"
+
