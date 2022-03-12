@@ -1,5 +1,6 @@
-#!/bin/sh
+#!/usr/bin/bash
 set -e # break script when error occurred
+shopt -s expand_aliases
 
 if [ $# = 0 ] ; then
     out_filename=ss_`date '+%Y%m%d-%H%M%S'`
@@ -12,9 +13,10 @@ fi
 
 
 echo get to start recording.
-adb shell tcpdump -s 0 -i eth0 -v -w /sdcard/tmp.pcap
-adb pull /sdcard/tmp.pcap $out_filename.pcap
-adb shell rm /sdcard/tmp.pcap
+adb --version
+# adb shell tcpdump -s 0 -i eth0 -v -w /sdcard/tmp.pcap
+# adb pull /sdcard/tmp.pcap $out_filename.pcap
+# adb shell rm /sdcard/tmp.pcap
 
 echo save packet capture as $out_filename.pcap
 

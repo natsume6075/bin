@@ -1,5 +1,6 @@
-#!/bin/sh
+#!/usr/bin/bash
 set -e # break script when error occurred
+shopt -s expand_aliases
 
 if [ $# = 0 ] ; then
     out_filename=ss_`date '+%Y%m%d-%H%M%S'`
@@ -12,9 +13,9 @@ fi
 
 
 echo get to start recording.
-adb shell screenrevord /sdcard/tmp.mp4
-adb pull /sdcard/tmp.mp4 $out_filename.mp4
-adb shell rm /sdcard/tmp.mp4
+/mnt/c/ProgramData/chocolatey/bin/adb.exe shell screenrecord /sdcard/tmp.mp4
+/mnt/c/ProgramData/chocolatey/bin/adb.adb pull /sdcard/tmp.mp4 $out_filename.mp4
+/mnt/c/ProgramData/chocolatey/bin/adb.adb shell rm /sdcard/tmp.mp4
 
 echo save screen record as $out_filename.mp4
 
@@ -22,6 +23,11 @@ echo save screen record as $out_filename.mp4
 "adb shell screenrecord" の後に、C-c をすることで初めて止まる？
 pull で勝手に止めちゃう？
 後者なら、オプションをラップしたほうがいいかも。(そもそも直で叩いたほうがいいかも)
+
+2022-03-01(Tue)
+確認した。勝手に止まることはない。
+だけど、^C で他のコマンドも止まっちゃうので、pull 以降が行われない。(push any key を作ったほうがいいかも。)
+
 
 "adb shell screenrecord" command option
 https://adbshell.com/commands/adb-shell-screenrecord
