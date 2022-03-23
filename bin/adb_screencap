@@ -1,0 +1,23 @@
+#!/bin/bash
+set -e # break script when error occurred
+shopt -s expand_aliases
+
+if [ $# = 0 ] ; then
+    out_filename=ss_`date '+%Y%m%d-%H%M%S'`
+elif [ $# = 1 ]; then
+    out_filename=$1
+else
+    echo "error: too many arguments" 1>&2
+    exit
+fi
+
+adb --version
+# /mnt/c/ProgramData/chocolatey/bin/adb.exe shell screencap -p /sdcard/tmp.png
+# /mnt/c/ProgramData/chocolatey/bin/adb.exe pull /sdcard/tmp.png $out_filename.png
+# /mnt/c/ProgramData/chocolatey/bin/adb.exe shell rm /sdcard/tmp.png
+# adb shell screencap -p /sdcard/tmp.png
+# adb pull /sdcard/tmp.png $out_filename.png
+# adb shell rm /sdcard/tmp.png
+
+echo save screen capture as $out_filename.png
+
