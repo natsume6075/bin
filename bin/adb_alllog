@@ -25,7 +25,7 @@ alias adb='/mnt/c/ProgramData/chocolatey/bin/adb.exe'
 set -e # break script when error occurred
 shopt -s expand_aliases
 
-# set temporary file location in local environment. 
+# set temporary file location in local environment.
 tmp_dir=/sdcard
 
 # set $out_filename
@@ -39,13 +39,9 @@ else
 fi
 
 
-sudo tcpdump -i any -w hoge.pcap &
-PID=$!
-# ps aux | grep tcpdump
-
 # TODO ルートが取れるか否かで分岐。取れないなら pcap はできない。
-# adb root
-# 
+adb root
+#
 # adb shell screenrecord $tmp_dir/tmp.mp4
 # adb logcat -f $tmp_dir/tmp.logcat
 # adb shell tcpdump -s 0 -i eth0 -v -w $tmp_dir/tmp.pcap
@@ -93,8 +89,4 @@ echo save logcat as $out_filename.logcat
 adb pull $tmp_dir/tmp.pcap $out_filename.pcap
 adb shell rm $tmp_dir/tmp.pcap
 echo save packet capture as $out_filename.pcap
-
-
-# Kill background process incase kill PID fails
-# trap "kill 0" SIGINT SIGTERM EXIT
 
