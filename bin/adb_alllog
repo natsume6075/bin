@@ -39,18 +39,21 @@ else
 fi
 
 
+# TODO これは attach は不適。なにで接続確認しようかな？
 # attach できてないならここで終了。
-adb attach
+# adb attach
 
-# TODO ルートが取れるか否かで分岐。取れないなら pcap はできない。
+# ルートが取れるか否かで分岐。取れないなら pcap はできない。
 # set -e をしているので、処理を中断せずにエラーハンドリングできるように、: と論理和を取っている。
 # : は常に exit code 0 を返すコマンド。set -e は、論理演算子の最も右のコマンドが失敗したときのみ処理を中断する。
 adb root && :
 Rooted=$?
-echo $Rooted
+
+echo -e ""
 
 if [ $Rooted = 0 ] ; then
-    adb shell tcpdump -s 0 -i eth0 -v -w $tmp_dir/tmp.pcap
+    # TODO pcap の取得ステータスがうるさい
+    adb shell tcpdump -s 0 -i eth0 -v -w $tmp_dir/tmp.pcap &
     PID_tcpdump=$!
     echo -e "Start getting packet capture.\n"
 fi
@@ -84,7 +87,7 @@ do
     fi
 done
 
-# TODO プロセスをキルする
+
 if [ $Rooted = 0 ] ; then
     kill $PID_tcpdump
 fi
@@ -103,6 +106,13 @@ if [ $Rooted = 0 ] ; then
     adb shell rm $tmp_dir/tmp.pcap
     echo -e "Save packet capture as $out_filename.pcap\n"
 fi
+# TODO とは
+#
+# The capture file appears to be damaged or corrupt.
+# (pcap: File has 1648535296-byte packet, bigger than maximum of 262144)
+#
+# The capture file appears to have been cut short in the middle of a packet.
+#
 
 adb pull $tmp_dir/tmp.logcat $out_filename.logcat
 adb shell rm $tmp_dir/tmp.logcat
