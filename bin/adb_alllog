@@ -39,20 +39,32 @@ else
 fi
 
 
+# attach できてないならここで終了。
+adb attach
+
 # TODO ルートが取れるか否かで分岐。取れないなら pcap はできない。
-# adb root
-# adb shell tcpdump -s 0 -i eth0 -v -w $tmp_dir/tmp.pcap
-# PID_tcpdump=$!
-# echo -e "Start getting packet capture.\n"
-#
-# TODO なぜか screenrecord はうまくいかない。原因不明。
-# adb shell screenrecord $tmp_dir/tmp.mp4 &
-#
-# ps | grep adb
+# set -e をしているので、処理を中断せずにエラーハンドリングできるように、: と論理和を取っている。
+# : は常に exit code 0 を返すコマンド。set -e は、論理演算子の最も右のコマンドが失敗したときのみ処理を中断する。
+adb root && :
+Rooted=$?
+echo $Rooted
+
+if [ $Rooted = 0 ] ; then
+    adb shell tcpdump -s 0 -i eth0 -v -w $tmp_dir/tmp.pcap
+    PID_tcpdump=$!
+    echo -e "Start getting packet capture.\n"
+fi
 
 adb logcat -f $tmp_dir/tmp.logcat &
 PID_logcat=$!
 echo -e "Start getting logcat.\n"
+
+# TODO なぜか screenrecord はうまくいかない。原因不明。
+# adb shell screenrecord $tmp_dir/tmp.mp4 &
+# PID_screenrecord=$!
+# echo -e "Start screen recording.\n"
+# ps | grep adb
+
 
 # wait user's input. 'quit'=>stop loggin. ''=>take screen capture.
 i=1
@@ -73,8 +85,11 @@ do
 done
 
 # TODO プロセスをキルする
+if [ $Rooted = 0 ] ; then
+    kill $PID_tcpdump
+fi
 kill $PID_logcat
-# kill $PID_tcpdump
+# kill $PID_screenrecord
 
 
 echo -e "Logging is terminated...\n"
@@ -83,15 +98,17 @@ sleep 3
 
 # For each element of process stack, rename temporary output files and move them to the host.
 
-# adb pull $tmp_dir/tmp.mp4 $out_filename.mp4
-# adb shell rm $tmp_dir/tmp.mp4
-# echo -e "Save screen record as $out_filename.mp4\n"
+if [ $Rooted = 0 ] ; then
+    adb pull $tmp_dir/tmp.pcap $out_filename.pcap
+    adb shell rm $tmp_dir/tmp.pcap
+    echo -e "Save packet capture as $out_filename.pcap\n"
+fi
 
 adb pull $tmp_dir/tmp.logcat $out_filename.logcat
 adb shell rm $tmp_dir/tmp.logcat
 echo -e "Save logcat as $out_filename.logcat\n"
 
-# adb pull $tmp_dir/tmp.pcap $out_filename.pcap
-# adb shell rm $tmp_dir/tmp.pcap
-# echo -e "Save packet capture as $out_filename.pcap\n"
+# adb pull $tmp_dir/tmp.mp4 $out_filename.mp4
+# adb shell rm $tmp_dir/tmp.mp4
+# echo -e "Save screen record as $out_filename.mp4\n"
 
