@@ -112,6 +112,8 @@ fi
 #
 # The capture file appears to have been cut short in the middle of a packet.
 #
+# https://musclehunter.blogspot.com/2013/05/tcpdumpwireshark.html
+#
 
 adb pull $tmp_dir/tmp.logcat $out_filename.logcat
 adb shell rm $tmp_dir/tmp.logcat
