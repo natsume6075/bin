@@ -5,7 +5,7 @@
 - screen capture
 - screen record
 - logcat
-- tcpdump
+- packet capture (tcpdump)
 screen capture は、実行後に Enter を押すたびに取れる。
 それ以外は、実行から quit を入力するまで取れる。
 つまり、開始前のログは取らない。開始前を含めて取得したい場合は、他の方法で。
@@ -42,6 +42,8 @@ fi
 # TODO ルートが取れるか否かで分岐。取れないなら pcap はできない。
 # adb root
 # adb shell tcpdump -s 0 -i eth0 -v -w $tmp_dir/tmp.pcap
+# PID_tcpdump=$!
+# echo -e "Start getting packet capture.\n"
 #
 # TODO なぜか screenrecord はうまくいかない。原因不明。
 # adb shell screenrecord $tmp_dir/tmp.mp4 &
@@ -72,6 +74,7 @@ done
 
 # TODO プロセスをキルする
 kill $PID_logcat
+# kill $PID_tcpdump
 
 
 echo -e "Logging is terminated...\n"
