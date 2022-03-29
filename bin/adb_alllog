@@ -52,8 +52,7 @@ Rooted=$?
 echo -e ""
 
 if [ $Rooted = 0 ] ; then
-    # TODO pcap の取得ステータスがうるさい
-    adb shell tcpdump -s 0 -i eth0 -v -w $tmp_dir/tmp.pcap &
+    adb shell tcpdump -s 0 -i eth0 -w $tmp_dir/tmp.pcap &
     PID_tcpdump=$!
     echo -e "Start getting packet capture.\n"
 fi
