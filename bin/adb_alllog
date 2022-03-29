@@ -40,15 +40,16 @@ fi
 
 
 # TODO ルートが取れるか否かで分岐。取れないなら pcap はできない。
-adb root
-#
-# adb shell screenrecord $tmp_dir/tmp.mp4
-# adb logcat -f $tmp_dir/tmp.logcat
+# adb root
 # adb shell tcpdump -s 0 -i eth0 -v -w $tmp_dir/tmp.pcap
-
-# TODO PID を取る。それぞれのコマンド直後にやるべき？
-# PID=$!
+#
+# TODO なぜか screenrecord はうまくいかない。原因不明。
+# adb shell screenrecord $tmp_dir/tmp.mp4 &
+#
 # ps | grep adb
+
+adb logcat -f $tmp_dir/tmp.logcat &
+PID_logcat=$!
 
 # wait user's input. 'quit'=>stop loggin. ''=>take screen capture.
 i=1
@@ -56,9 +57,9 @@ while true
 do
     read -p "Press [Enter] to take screen capture. Input quit[Enter] to stop logging." input
     if [ "$input" = '' ] ; then
-        # adb shell screencap -p $tmp_dir/tmp.png
-        # adb pull $tmp_dir/tmp.png $out_filename\_$i.png
-        # adb shell rm $tmp_dir/tmp.png
+        adb shell screencap -p $tmp_dir/tmp.png
+        adb pull $tmp_dir/tmp.png $out_filename\_$i.png
+        adb shell rm $tmp_dir/tmp.png
         echo save screen capture as $out_filename\_$i.png
         i=$((i+=1))
     elif [ "$input" = 'quit' ] ; then
@@ -68,8 +69,8 @@ do
     fi
 done
 
-# TODO 3つともプロセスをキルする
-kill $PID
+# TODO プロセスをキルする
+kill $PID_logcat
 
 
 echo "Logging is terminated..."
@@ -78,15 +79,15 @@ sleep 3
 
 # For each element of process stack, rename temporary output files and move them to the host.
 
-adb pull $tmp_dir/tmp.mp4 $out_filename.mp4
-adb shell rm $tmp_dir/tmp.mp4
-echo save screen record as $out_filename.mp4
+# adb pull $tmp_dir/tmp.mp4 $out_filename.mp4
+# adb shell rm $tmp_dir/tmp.mp4
+# echo save screen record as $out_filename.mp4
 
 adb pull $tmp_dir/tmp.logcat $out_filename.logcat
 adb shell rm $tmp_dir/tmp.logcat
 echo save logcat as $out_filename.logcat
 
-adb pull $tmp_dir/tmp.pcap $out_filename.pcap
-adb shell rm $tmp_dir/tmp.pcap
-echo save packet capture as $out_filename.pcap
+# adb pull $tmp_dir/tmp.pcap $out_filename.pcap
+# adb shell rm $tmp_dir/tmp.pcap
+# echo save packet capture as $out_filename.pcap
 
