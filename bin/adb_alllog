@@ -50,6 +50,7 @@ fi
 
 adb logcat -f $tmp_dir/tmp.logcat &
 PID_logcat=$!
+echo -e "Start getting logcat.\n"
 
 # wait user's input. 'quit'=>stop loggin. ''=>take screen capture.
 i=1
@@ -60,12 +61,12 @@ do
         adb shell screencap -p $tmp_dir/tmp.png
         adb pull $tmp_dir/tmp.png $out_filename\_$i.png
         adb shell rm $tmp_dir/tmp.png
-        echo save screen capture as $out_filename\_$i.png
+        echo -e "Save screen capture as $out_filename""_$i.png\n"
         i=$((i+=1))
     elif [ "$input" = 'quit' ] ; then
         break 1
     else
-        echo "Invalid input."
+        echo -e "Invalid input.\n"
     fi
 done
 
@@ -73,7 +74,7 @@ done
 kill $PID_logcat
 
 
-echo "Logging is terminated..."
+echo -e "Logging is terminated...\n"
 sleep 3
 
 
@@ -81,13 +82,13 @@ sleep 3
 
 # adb pull $tmp_dir/tmp.mp4 $out_filename.mp4
 # adb shell rm $tmp_dir/tmp.mp4
-# echo save screen record as $out_filename.mp4
+# echo -e "Save screen record as $out_filename.mp4\n"
 
 adb pull $tmp_dir/tmp.logcat $out_filename.logcat
 adb shell rm $tmp_dir/tmp.logcat
-echo save logcat as $out_filename.logcat
+echo -e "Save logcat as $out_filename.logcat\n"
 
 # adb pull $tmp_dir/tmp.pcap $out_filename.pcap
 # adb shell rm $tmp_dir/tmp.pcap
-# echo save packet capture as $out_filename.pcap
+# echo -e "Save packet capture as $out_filename.pcap\n"
 
