@@ -22,7 +22,7 @@ DISCRIPTIONS
 
 alias adb='/mnt/c/ProgramData/chocolatey/bin/adb.exe'
 
-set -e # break script when error occurred
+set -eu
 shopt -s expand_aliases
 
 # set temporary file location in local environment.
@@ -44,10 +44,10 @@ fi
 # adb attach
 
 # ルートが取れるか否かで分岐。取れないなら pcap はできない。
-# set -e をしているので、処理を中断せずにエラーハンドリングできるように、: と論理和を取っている。
-# : は常に exit code 0 を返すコマンド。set -e は、論理演算子の最も右のコマンドが失敗したときのみ処理を中断する。
-adb root && :
+set +e
+adb root
 Rooted=$?
+set -e
 
 echo -e ""
 
