@@ -39,11 +39,10 @@ else
 fi
 
 
-# TODO これは attach は不適。なにで接続確認しようかな？
-# attach できてないならここで終了。
-# adb attach
+# device が準備できてないならここで終了。
+adb get-state > /dev/null
 
-# ルートが取れるか否かで分岐。取れないなら pcap はできない。
+# ルートが取れた否かを Rooted に格納。取れないなら pcap はできない。
 set +e
 adb root
 Rooted=$?
