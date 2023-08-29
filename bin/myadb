@@ -1,0 +1,45 @@
+#!/usr/bin/bash
+
+<< DISCRIPTIONS
+adb 操作を楽にするスクリプト。
+adb のラッパーのように働く。
+
+全てのコマンドについて、以下を行う。
+- 複数デバイス接続時のデバイス指定を対話的に行う。
+- エイリアスが張られている場合、それを反映する。
+
+以下のコマンドについて、それぞれ以下を行う。
+- logcat
+  - output file 名の対話的指定および自動生成
+    - ファイル名は、開始時の日付時刻になる。引数でその後ろに文字列を追加できる。
+  - 標準出力のフィルタリング
+
+
+パスの通っている adb 以外を使いたい場合は、エイリアスを張る。(例えば choocolatey でインストールしているなら以下のようになる。)
+alias adb='/mnt/c/ProgramData/chocolatey/bin/adb.exe'
+
+Maintainer:       natsume6075
+Latest Revision:
+DISCRIPTIONS
+
+
+alias adb='/mnt/c/ProgramData/chocolatey/bin/adb.exe'
+
+set -eu
+shopt -s expand_aliases
+
+
+DEVICES=$(adb devices)
+
+while $DEVICES != ""
+do
+  IFS=$'\n'
+  DEVICES=($DEVICES)
+  echo ${DEVICES[0]}
+  # slise
+done
+
+
+
+# https://github.com/ksoichiro/adbs/blob/master/adbs.go
+

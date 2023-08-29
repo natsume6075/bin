@@ -1,0 +1,19 @@
+#!/usr/bin/bash
+set -eu
+
+if [ $# = 0 ] || [ $# = 1 ] ; then
+    echo -e "Not enough arguments! You should use as following.\nmap [operator] [(operands...)] [input_filename(directory path is acceptable)]"
+    exit
+fi
+
+args=("$@")
+argn=$#
+input_path=${args[$argn-1]}
+operator=${args[@]::$argn-1}
+
+# TODO 空白を含むファイル名などに対応する？
+for file in `\find $input_path -type f`;
+do
+    $operator $file
+done
+
