@@ -1,0 +1,97 @@
+#!/usr/bin/bash
+
+<< DISCRIPTIONS
+このスクリプトでは、adb で以下のログが取れる。
+- screen capture
+- screen record
+- logcat
+- packet capture (tcpdump)
+screen capture は、実行後に Enter を押すたびに取れる。
+それ以外は、実行から quit を入力するまで取れる。
+つまり、開始前のログは取らない。開始前を含めて取得したい場合は、他の方法で。
+
+ファイル名は、開始時の日付時刻になる。引数でその後ろに文字列を追加できる。
+
+パスの通っている adb 以外を使いたい場合は、エイリアスを張る。(例えば choocolatey でインストールしているなら以下のようになる。)
+alias adb='/mnt/c/ProgramData/chocolatey/bin/adb.exe'
+
+Maintainer:       Atsuyuki Natsume
+Latest Revision:  2022-03-23
+DISCRIPTIONS
+
+
+alias adb='/mnt/c/ProgramData/chocolatey/bin/adb.exe'
+
+set -e # break script when error occurred
+shopt -s expand_aliases
+
+# set temporary file location in local environment.
+tmp_dir=/sdcard
+
+# set $out_filename
+if [ $# = 0 ] ; then
+    out_filename=`date '+%Y%m%d%H%M%S'`
+elif [ $# = 1 ]; then
+    out_filename=`date '+%Y%m%d%H%M%S'`_$1
+else
+    echo -e "Too many arguments! You should use as following.\nadb_alllog [output_filename(directory path is acceptable)]"
+    exit
+fi
+
+
+# TODO ルートが取れるか否かで分岐。取れないなら pcap はできない。
+# adb root
+# adb shell tcpdump -s 0 -i eth0 -v -w $tmp_dir/tmp.pcap
+# PID_tcpdump=$!
+# echo -e "Start getting packet capture.\n"
+#
+# TODO なぜか screenrecord はうまくいかない。原因不明。
+# adb shell screenrecord $tmp_dir/tmp.mp4 &
+#
+# ps | grep adb
+
+adb logcat -f $tmp_dir/tmp.logcat &
+PID_logcat=$!
+echo -e "Start getting logcat.\n"
+
+# wait user's input. 'quit'=>stop loggin. ''=>take screen capture.
+i=1
+while true
+do
+    read -p "Press [Enter] to take screen capture. Input quit[Enter] to stop logging." input
+    if [ "$input" = '' ] ; then
+        adb shell screencap -p $tmp_dir/tmp.png
+        adb pull $tmp_dir/tmp.png $out_filename\_$i.png
+        adb shell rm $tmp_dir/tmp.png
+        echo -e "Save screen capture as $out_filename""_$i.png\n"
+        i=$((i+=1))
+    elif [ "$input" = 'quit' ] ; then
+        break 1
+    else
+        echo -e "Invalid input.\n"
+    fi
+done
+
+# TODO プロセスをキルする
+kill $PID_logcat
+# kill $PID_tcpdump
+
+
+echo -e "Logging is terminated...\n"
+sleep 3
+
+
+# For each element of process stack, rename temporary output files and move them to the host.
+
+# adb pull $tmp_dir/tmp.mp4 $out_filename.mp4
+# adb shell rm $tmp_dir/tmp.mp4
+# echo -e "Save screen record as $out_filename.mp4\n"
+
+adb pull $tmp_dir/tmp.logcat $out_filename.logcat
+adb shell rm $tmp_dir/tmp.logcat
+echo -e "Save logcat as $out_filename.logcat\n"
+
+# adb pull $tmp_dir/tmp.pcap $out_filename.pcap
+# adb shell rm $tmp_dir/tmp.pcap
+# echo -e "Save packet capture as $out_filename.pcap\n"
+
