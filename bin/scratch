@@ -4,5 +4,4 @@
 # fish のパス経由の scratch だと引数$1の名前のファイル単体が生成されてしまう。
 
 filename=`date '+%Y-%m-%d_'`$1.md
-nvim "$SCRATCHES/$filename"
-
+nvim -c "cd $SCRATCHES" "$SCRATCHES/$filename"
